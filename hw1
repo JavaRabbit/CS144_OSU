@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Hi cheshire cat"
+
+# Check for the correct number of arguments
+# There should be only 1 or 2 arguments
+# stats -row someFile    $0 is the scriptname
+#    $# returns the num of arguements
+echo $#
+
+if [[ "$#" -gt 2 || "$#" -lt 1 ]]
+then
+  echo "./stats {-rows|-cols} [file]"
+fi
