@@ -22,14 +22,18 @@ input=$2
 while read line
 do
   echo $line
+  # for each row, the array must be cleared to 0 elements!
   numArr=()
+  numElementsInRow=0
   numArr=("${numArr[@]}" $line)
 
   sum=0
   for i in ${numArr[@]}
     do
+      numElementsInRow=$((numElementsInRow + 1))
       sum=$((sum + i))
     done
 
   echo "The row sum is $sum"
+  echo "The number of elements is: $numElementsInRow"
 done < $input
