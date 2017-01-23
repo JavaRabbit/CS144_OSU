@@ -1,27 +1,43 @@
 #!/bin/bash
 
-echo "Hi cheshire cat"
 # create a new temp file with process id
 tempfile="tmpfile$$"
-echo $tempfile
+#echo $tempfile
+
+# trap interrupt if needed
+trap "rm -f $tempFile" INT HUP TERM EXIT
 
 # Check for the correct number of arguments
 # There should be only 1 or 2 arguments
-#   $# returns the num of arguements
+#   $# returns the num of arguments
 # exit 1 if incorrect numbers of parameters
 if [[ "$#" -gt 2 || "$#" -lt 1 ]]
 then
-  echo "./stats {-rows|-cols} [file]" 1>&2
+  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
   exit 1
 fi
 
-# open the score file which is represented by $2
-input=$2
+# check to see if text file is there. If not, let user enter into temp file
+if [[ "$#" -eq 2 ]]
+then
+  # if argument is there, use it as the input
+  input=$2
+else
+  echo "cat needs to be here"
+  exit 0
+fi
+
+
+
 #echo $input
 
+
+# check for existing but empty file
+
+# Do if/else check, this is for rows. -----------------
 while read line
 do
-  echo $line
+  #echo $line
   # for each row, the array must be cleared to 0 elements!
   numArr=()
   numElementsInRow=0
@@ -36,4 +52,11 @@ do
 
   echo "The row sum is $sum"
   echo "The number of elements is: $numElementsInRow"
+  echo "the first element is ${numArr[0]}"
+  # sort the array
+
+  # echo out the median
 done < $input
+
+
+#---- For Adding up columns ---------------
