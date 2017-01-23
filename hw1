@@ -17,15 +17,6 @@ then
   exit 1
 fi
 
-# check that file exists and is readable
-if [[ -a $2 && -r $2 ]]
-then
-  echo "file found"
-else
-  echo "./stats: cannot read $2" 1>&2
-  exit 1
-fi
-
 
 
 # check to see if text file is there. If not, let user enter into temp file
@@ -42,15 +33,31 @@ else
 fi
 
 
-# check for existing but empty file --- TO DO!!!!!!
+# check that file exists and is readable
+if [[ -a $2 && -r $2 ]]
+then
+  echo "file found"
+else
+  echo "./stats: cannot read $2" 1>&2
+  exit 1
+fi
+
+
+# check for existing but empty file --- TO DO!!!!!!  use -s
+
 
 
 # check for cannot read file
-
+# if user self entered, use input, else use $2
 
 
 # Do if/else check, this is for rows. -----------------
 # check for -r -c and -both (-both should show usage )
+
+if [[ $1 == -r* ]]
+then
+
+
 
 while read line
 do
@@ -77,3 +84,11 @@ done < $input
 
 
 #---- For Adding up columns ---------------
+elif [[ $1 == -c* ]]
+  then
+  echo "starts with c"
+
+else
+  echo "not r or c"
+  # state usage here
+fi
