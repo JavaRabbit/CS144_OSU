@@ -57,7 +57,7 @@ fi
 if [[ $1 == -r* ]]
 then
 
-
+echo "Averages  Median"
 
 while read line
 do
@@ -67,6 +67,7 @@ do
   numElementsInRow=0
   numArr=("${numArr[@]}" $line)
 
+  # initialize variable "sum" to hold sum of row
   sum=0
   for i in ${numArr[@]}
     do
@@ -74,10 +75,17 @@ do
       sum=$((sum + i))
     done
 
-  echo "The row sum is $sum"
-  echo "The number of elements is: $numElementsInRow"
-  echo "the first element is ${numArr[0]}"
+  #echo the average for the row. Ensure that numbers are rounded correctly
+
+  average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
+  echo " $average"
+  #echo "the sum is $sum"
+  #echo "The number of elements is: $numElementsInRow"
+  #echo "the first element is ${numArr[0]}"
+
   # sort the array
+  echo "${numArr[@]}" # this is how to print the array
+
 
   # echo out the median
 done < $input
