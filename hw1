@@ -71,7 +71,9 @@ do
   sum=0
   for i in ${numArr[@]}
     do
+      # for each element add 1 to the numElementsInRow
       numElementsInRow=$((numElementsInRow + 1))
+      # add the elements value to the sum
       sum=$((sum + i))
     done
 
@@ -84,8 +86,14 @@ do
   #echo "the first element is ${numArr[0]}"
 
   # sort the array
-  echo "${numArr[@]}" # this is how to print the array
+  #echo "${numArr[@]}" # this is how to print the array
+  #array=(34 56 12 31)
+  #for i in "${array[@]}"; do echo "$i"; done | sort -n
+  #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort ))
+  numArr=`for each in ${numArr[@]}; do echo "$each" ; done | sort -n`
 
+
+  echo "${numArr[@]}"
 
   # echo out the median
 done < $input
