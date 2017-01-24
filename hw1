@@ -89,11 +89,20 @@ do
   #echo "${numArr[@]}" # this is how to print the array
   #array=(34 56 12 31)
   #for i in "${array[@]}"; do echo "$i"; done | sort -n
-  #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort ))
-  numArr=`for each in ${numArr[@]}; do echo "$each" ; done | sort -n`
+  #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+  numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
   echo "${numArr[@]}"
+  # determine element which to use for median
+  mediam=0
+  # if numElementsInRow is odd
+  if [[ $((numElementsInRow%2)) -eq 1 ]]
+    then
+    echo "The median is ${numArr[$((numElementsInRow%2))]}"
+    echo "helk"
+  fi
+  # else numElementsInRow is even
 
   # echo out the median
 done < $input
