@@ -38,8 +38,9 @@ if [[ -a $2 && -r $2 ]]
 then
   echo "file found"
 else
-  echo "./stats: cannot read $2" 1>&2
-  exit 1
+  #echo "./stats: cannot read $2" 1>&2
+  echo "by pass"
+  #exit 1
 fi
 
 
@@ -99,8 +100,8 @@ do
   # if numElementsInRow is odd
   if [[ $((numElementsInRow%2)) -eq 1 ]]
     then
-    echo "The median is ${numArr[$((numElementsInRow%2))]}"
-    echo "helk"
+    echo "The median is ${numArr[$((numElementsInRow/2))]}"
+
   fi
   # else numElementsInRow is even
 
@@ -117,3 +118,5 @@ else
   echo "not r or c"
   # state usage here
 fi
+
+# Remove temp file???
