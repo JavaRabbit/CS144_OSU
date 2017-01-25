@@ -71,6 +71,7 @@ transpose(){
   echo "${numArrs[@]} is in numArrs"
 
   # count the number of ELEMENTS (aka Columns)
+  # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
   echo "${#numArrs[@]} is the number of columns"
 
 
