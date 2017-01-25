@@ -74,6 +74,14 @@ transpose(){
   # count the number of ELEMENTS (aka Columns)
   # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
   echo "${#numArrs[@]} is the number of columns"
+  numCols=${#numArrs[@]}
+  echo "confirming $numCols"
+
+  # transpose data using for loop from 1 to numCols
+  for index in $(seq 1 $numCols)
+  do
+    echo "$index" >> $tempfile_transpose
+  done
 
 
 }
