@@ -103,6 +103,7 @@ transpose(){
 
     done < $input
     echo "Finallly........ the colArray is ${colArray[@]}"
+    echo ${colArray[@]} >> $tempfile_transpose
     echo "${#colArray[@]} is the num of values colArray" # after reading all rows
   done
 
