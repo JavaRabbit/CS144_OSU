@@ -61,7 +61,6 @@ transpose(){
 
   # first count number of columns
   # by using head to get the first line from the file
-  input=$2
 
   line=$(head -n 1 math.txt)  #this needs to be fixed
   echo "$line  is first line in transpose"
@@ -81,6 +80,12 @@ transpose(){
   for index in $(seq 1 $numCols)
   do
     echo "$index" >> $tempfile_transpose
+
+    # this is the inside nested loop
+    while read line
+    do
+      echo "sslkjfd $index" >> $tempfile_transpose
+    done < $input
   done
 
 
