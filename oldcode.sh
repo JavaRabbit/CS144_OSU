@@ -51,3 +51,55 @@ echo $c
 ##-------------------------
 
 cut -c1 simplemath.txt   # works only for cutting the first col but not the second
+
+
+##### Redoing mess of transpose ----------------------
+transpose(){
+
+  # first count number of columns
+  # by using head to get the first line from the file
+
+  line=$(head -n 1 math.txt)  #this needs to be fixed
+  echo "$line  is first line in transpose"
+
+  #initialize empty array, and put this line inside
+  numArrs=()
+  numArrs=("${numArrs[@]}" $line)
+  echo "${numArrs[@]} is in numArrs"
+
+  # count the number of ELEMENTS (aka Columns)
+  # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
+  echo "${#numArrs[@]} is the number of columns"
+  numCols=${#numArrs[@]}
+  echo "confirming $numCols"
+
+  # transpose data using for loop from 1 to numCols
+  for indexCol in $(seq 1 $numCols)
+  do
+    echo "$indexCol" >> $tempfile_transpose
+
+    # here is where we initialize empty array for the Column
+    colArray=()
+    # this is the inside nested loop
+    while read line
+    do
+      #echo "sslkjfd $index" >> $tempfile_transpose
+      # create an array, and put the line inside
+      #aa=()
+      #aa=("${aa[@]}" $line)
+      #echo "${numArrs[@]} is what is just read intothe array"
+      echo "for col $indexCol, reading a whole row(aka line)"
+      tmpArr=()
+      tmpArr=("${tmpArr[@]}" $line)
+      echo "${tmpArr[@]}  is now in tmpArr"
+
+      # now each time, use $indexCol to find
+      colArray+=("${tmpArr[$indexCol]}")
+      #echo "we jsut put ${tmpArr[$indexCol]} into the colArray"
+      echo "${colArray[@]} is the num of values colArray"
+
+    done < $input
+  done
+
+
+}

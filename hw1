@@ -72,7 +72,7 @@ transpose(){
 
   # count the number of ELEMENTS (aka Columns)
   # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
-  echo "${#numArrs[@]} is the number of columns"
+  echo "${#numArrs[@]} is the number of columns ******"
   numCols=${#numArrs[@]}
   echo "confirming $numCols"
 
@@ -97,9 +97,13 @@ transpose(){
       echo "${tmpArr[@]}  is now in tmpArr"
 
       # now each time, use $indexCol to find
-      echo "${tmpArr[$indexCol]}  is the value to put into colArray"
+      colArray+=(${tmpArr[$indexCol - 1]})    ### Fix index column minus 1 ######
+      #echo "we jsut put ${tmpArr[$indexCol]} into the colArray"
+
 
     done < $input
+    echo "Finallly........ the colArray is ${colArray[@]}"
+    echo "${#colArray[@]} is the num of values colArray" # after reading all rows
   done
 
 
