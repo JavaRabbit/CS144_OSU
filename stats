@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# create a new temp file with process id
+tempfile="tmpfile$$"
+#echo $tempfile
+
+# trap interrupt if needed
+trap "rm -f $tempFile" INT HUP TERM EXIT
+
+# Check for the correct number of arguments
+# There should be only 1 or 2 arguments
+#   $# returns the num of arguments
+# exit 1 if incorrect numbers of parameters
+if [[ "$#" -gt 2 || "$#" -lt 1 ]]
+then
+  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  exit 1
+fi
+
+
+
+# check to see if text file is there. If not, let user enter into temp file
+if [[ "$#" -eq 2 ]]
+then
+  # if argument is there, use it as the input
+  input=$2
+else
+  # prompt user with cat for stdin
+  echo "enter vals"
+  cat > "$tempfile"
+  input="$tempfile"
+
+fi
+
+
+# check that file exists and is readable
+if [[ -a $2 && -r $2 ]]
+then
+  echo "file found"
+else
+  echo "./stats: cannot read $2" 1>&2
+  exit 1
+fi
+
+
+# check for existing but empty file --- TO DO!!!!!!  use -s
+
+
+
+# check for cannot read file
+# if user self entered, use input, else use $2
+
+
+# Do if/else check, this is for rows. -----------------
+# check for -r -c and -both (-both should show usage )
+
+if [[ $1 == -r* ]]
+then
+
+echo "Averages  Median"
+
+while read line
+do
+  #echo $line
+  # for each row, the array must be cleared to 0 elements!
+  numArr=()
+  numElementsInRow=0
+  numArr=("${numArr[@]}" $line)
+
+  # initialize variable "sum" to hold sum of row
+  sum=0
+  for i in ${numArr[@]}
+    do
+      numElementsInRow=$((numElementsInRow + 1))
+      sum=$((sum + i))
+    done
+
+  #echo the average for the row. Ensure that numbers are rounded correctly
+
+  echo "the sum is $sum"
+  #echo "The number of elements is: $numElementsInRow"
+  #echo "the first element is ${numArr[0]}"
+  # sort the array
+
+  # echo out the median
+done < $input
+
+
+#---- For Adding up columns ---------------
+elif [[ $1 == -c* ]]
+  then
+  echo "starts with c"
+
+else
+  echo "not r or c"
+  # state usage here
+fi

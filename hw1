@@ -60,12 +60,18 @@ fi
 transpose(){
 
   # first count number of columns
-
-  # use head to get the first line from the file
+  # by using head to get the first line from the file
 
   line=$(head -n 1 simplemath.txt)
   echo "$line  is first line in transpose"
 
+  #initialize empty array, and put this line inside
+
+  numArrs=("${numArrs[@]}" $line)
+  echo "${numArrs[@]} is in numArrs"
+
+  # count the number of ELEMENTS (aka Columns)
+  echo "${#numArrs[@]} is the number of columns"
 
 
 }
@@ -103,12 +109,12 @@ do
   average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
   echo " $average"
   #echo "the sum is $sum"
-  #echo "The number of elements is: $numElementsInRow"
+  echo "The number of elements is: $numElementsInRow"
   #echo "the first element is ${numArr[0]}"
 
   # sort the array
   #echo "${numArr[@]}" # this is how to print the array
-  #array=(34 56 12 31)
+
   #for i in "${array[@]}"; do echo "$i"; done | sort -n
   #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
   numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
