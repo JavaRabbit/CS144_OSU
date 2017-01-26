@@ -158,3 +158,70 @@ transpose(){
 
 
 }
+
+# columns before changes
+
+#---- For Adding up columns ---------------
+elif [[ $1 == -c* ]]
+  then
+  transpose
+  echo "starts with c"
+  input=$tempfile_transpose
+  echo "now using transpose file"
+
+  echo "-----------  transpose finished -------------"
+
+  while read line
+  do
+    #echo $line
+    # for each row, the array must be cleared to 0 elements!
+    # put the line into the array
+    numArr=()
+    numElementsInRow=0
+    numArr=("${numArr[@]}" $line)
+
+    # initialize variable "sum" to hold sum of row
+    sum=0
+    for i in ${numArr[@]}
+      do
+        # for each element add 1 to the numElementsInRow
+        numElementsInRow=$((numElementsInRow + 1))
+        # add the elements value to the sum
+        sum=$((sum + i))
+      done
+
+    #echo the average for the row. Ensure that numbers are rounded correctly
+
+    average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
+    echo "$average  is the averge"
+    #echo "the sum is $sum"
+    echo "The number of elements is: $numElementsInRow"
+    #echo "the first element is ${numArr[0]}"
+
+    # sort the array
+    #echo "${numArr[@]}" # this is how to print the array
+
+    #for i in "${array[@]}"; do echo "$i"; done | sort -n
+    #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+    numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+
+
+    echo "${numArr[@]} is the sorted row"
+    # determine element which to use for median
+    median=0
+    # if numElementsInRow is odd
+    if [[ $((numElementsInRow%2)) -eq 1 ]]
+      then
+      echo "The median is ${numArr[$((numElementsInRow/2))]}"
+    else
+
+      echo "num of elements in row is even"
+
+      # if there are an an even number of elemnts per row
+      #choose larger of the two middle values
+
+    fi
+    # else numElementsInRow is even
+
+    # echo out the median
+  done < $input

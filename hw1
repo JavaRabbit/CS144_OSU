@@ -164,15 +164,18 @@ done < $input
 elif [[ $1 == -c* ]]
   then
   transpose
-  echo "starts with c"
+
+  # set the tempfile_transpose as the input file
   input=$tempfile_transpose
-  echo "now using transpose file"
 
-  echo "-----------  transpose finished -------------"
+  # create 2 arrays to store results. One is an averages array, the other is median array
+  avgArray=()
+  medianArray=()
 
+  # this code follow from the same as row
   while read line
   do
-    #echo $line
+
     # for each row, the array must be cleared to 0 elements!
     # put the line into the array
     numArr=()
@@ -192,40 +195,38 @@ elif [[ $1 == -c* ]]
     #echo the average for the row. Ensure that numbers are rounded correctly
 
     average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
-    echo "$average  is the averge"
-    #echo "the sum is $sum"
-    echo "The number of elements is: $numElementsInRow"
-    #echo "the first element is ${numArr[0]}"
+    avgArray+=($average)
 
-    # sort the array
-    #echo "${numArr[@]}" # this is how to print the array
-
-    #for i in "${array[@]}"; do echo "$i"; done | sort -n
     #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
     numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
-    echo "${numArr[@]} is the sorted row"
+
     # determine element which to use for median
     median=0
     # if numElementsInRow is odd
     if [[ $((numElementsInRow%2)) -eq 1 ]]
       then
-      echo "The median is ${numArr[$((numElementsInRow/2))]}"
+      median="${numArr[$((numElementsInRow/2))]}"
     else
 
-      echo "num of elements in row is even"
+      median="${numArr[$((numElementsInRow/2))]}"
 
       # if there are an an even number of elemnts per row
       #choose larger of the two middle values
 
     fi
-    # else numElementsInRow is even
+    medianArray+=($median)
 
-    # echo out the median
   done < $input
 
-
+  # Print output to the screen
+  printf "Averages:\n"
+  printf "%s\t" ${avgArray[@]}
+  printf "\n"
+  printf "Median:\n"
+  printf "%s\t" ${medianArray[@]}
+  printf "\n"
 
 else
   echo "not r or c"
