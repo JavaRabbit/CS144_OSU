@@ -91,7 +91,7 @@ transpose(){
 
     # each time a "column is read", we add it to the tempfile_transpose file
     echo ${colArray[@]} >> $tempfile_transpose
-    
+
   done
 
 
@@ -106,16 +106,20 @@ then
 
 echo "Averages  Median"
 
+# use a while loop to read in the file line by line
 while read line
 do
-  #echo $line
+
   # for each row, the array must be cleared to 0 elements!
   # put the line into the array
   numArr=()
-  numElementsInRow=0
   numArr=("${numArr[@]}" $line)
 
+  # initialize a variable to hold the sum of each row. initialize to 0
+  numElementsInRow=0
+
   # initialize variable "sum" to hold sum of row
+  # iterate over every element in the array
   sum=0
   for i in ${numArr[@]}
     do
@@ -125,38 +129,34 @@ do
       sum=$((sum + i))
     done
 
-  #echo the average for the row. Ensure that numbers are rounded correctly
-
+  # compute the average with the correct rounding
   average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
-  echo "$average"
-  #echo "the sum is $sum"
-  echo "The number of elements is: $numElementsInRow"
-  #echo "the first element is ${numArr[0]}"
 
-  # sort the array
-  #echo "${numArr[@]}" # this is how to print the array
 
-  #for i in "${array[@]}"; do echo "$i"; done | sort -n
+  # sort the array using a for eac loop and echoing to sort
   #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
   numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
-  echo "${numArr[@]} is the sorted row"
   # determine element which to use for median
   median=0
   # if numElementsInRow is odd
   if [[ $((numElementsInRow%2)) -eq 1 ]]
     then
-    echo "The median is ${numArr[$((numElementsInRow/2))]}"
+    median="${numArr[$((numElementsInRow/2))]}"
+
   else
-    echo "the median is ${numArr[$((numElementsInRow/2))]}"
+    median="${numArr[$((numElementsInRow/2))]}"
+
     # if there are an an even number of elemnts per row
     #choose larger of the two middle values
 
   fi
-  # else numElementsInRow is even
 
-  # echo out the median
+  # echo out both the average and median for each row
+  printf "$average\t$median\n"
+
+
 done < $input
 
 
