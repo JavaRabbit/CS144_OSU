@@ -29,10 +29,9 @@ then
   input=$2
 else
   # prompt user with cat for stdin
-  echo "enter vals"
+  #echo "enter vals"
   cat > "$tempfile"
   input="$tempfile"
-
 fi
 
 
@@ -58,35 +57,33 @@ fi
 # transpose function for converting columns into rows
 # function will output a new file
 transpose(){
-
+  echo "starting transpose"
   # first count number of columns
   # by using head to get the first line from the file
-
-  line=$(head -n 1 math.txt)  #this needs to be fixed
-  echo "$line  is first line in transpose"
+  line=$(head -n 1 "$input")  #this needs to be fixed
+  #echo "$line  is first line in transpose"    #deleteLine
 
   #initialize empty array, and put this line inside
   numArrs=()
   numArrs=("${numArrs[@]}" $line)
-  echo "${numArrs[@]} is in numArrs"
+  #echo "${numArrs[@]} is in numArrs" # deleteLine
 
   # count the number of ELEMENTS (aka Columns)
   # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
-  echo "${#numArrs[@]} is the number of columns ******"
+  # echo "${#numArrs[@]} is the number of columns ******"  # deleteLine
   numCols=${#numArrs[@]}
-  echo "confirming $numCols"
+  # echo "confirming $numCols ***********************"  # delete line
 
   # transpose data using for loop from 1 to numCols
   for indexCol in $(seq 1 $numCols)
   do
-    #echo "$indexCol" >> $tempfile_transpose
+    #echo "$indexCol" >> $tempfile_transpose  # deleteLine
 
     # here is where we initialize empty array for the Column
     colArray=()
     # this is the inside nested loop
     while read line
     do
-      #echo "sslkjfd $index" >> $tempfile_transpose
       # create an array, and put the line inside
       #aa=()
       #aa=("${aa[@]}" $line)
@@ -162,9 +159,7 @@ do
     then
     echo "The median is ${numArr[$((numElementsInRow/2))]}"
   else
-
-    echo "num of elements in row is even"
-    echo "the median is ${}"
+    echo "the median is ${numArr[$((numElementsInRow/2))]}"
     # if there are an an even number of elemnts per row
     #choose larger of the two middle values
 
