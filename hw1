@@ -20,8 +20,6 @@ then
   exit 1
 fi
 
-
-
 # check to see if text file is there. If not, let user enter into temp file
 if [[ "$#" -eq 2 ]]
 then
@@ -29,7 +27,6 @@ then
   input=$2
 else
   # prompt user with cat for stdin
-  #echo "enter vals"
   cat > "$tempfile"
   input="$tempfile"
 fi
@@ -57,51 +54,44 @@ fi
 # transpose function for converting columns into rows
 # function will output a new file
 transpose(){
-  echo "starting transpose"
+
   # first count number of columns
   # by using head to get the first line from the file
-  line=$(head -n 1 "$input")  #this needs to be fixed
-  #echo "$line  is first line in transpose"    #deleteLine
+  line=$(head -n 1 "$input")
 
-  #initialize empty array, and put this line inside
+  #initialize empty array, and put first read line inside
   numArrs=()
   numArrs=("${numArrs[@]}" $line)
-  #echo "${numArrs[@]} is in numArrs" # deleteLine
 
   # count the number of ELEMENTS (aka Columns)
-  # https://www.cyberciti.biz/faq/finding-bash-shell-array-length-elements/undo
-  # echo "${#numArrs[@]} is the number of columns ******"  # deleteLine
   numCols=${#numArrs[@]}
-  # echo "confirming $numCols ***********************"  # delete line
 
-  # transpose data using for loop from 1 to numCols
+  # below is a while loop nested in a for loop
+  # for loop iterates over all columns, and while loop iterates
+  # over the rows
+
   for indexCol in $(seq 1 $numCols)
   do
-    #echo "$indexCol" >> $tempfile_transpose  # deleteLine
-
-    # here is where we initialize empty array for the Column
+    #  initialize empty array for the Column
     colArray=()
     # this is the inside nested loop
     while read line
     do
-      # create an array, and put the line inside
-      #aa=()
-      #aa=("${aa[@]}" $line)
-      #echo "${numArrs[@]} is what is just read intothe array"
-      echo "for col $indexCol, reading a whole row(aka line)"
+      # initialize an empty array, and read each row in the array
+      # In essence, we store each row
       tmpArr=()
       tmpArr=("${tmpArr[@]}" $line)
-      echo "${tmpArr[@]}  is now in tmpArr"
 
-      # now each time, use $indexCol to find
+      # each time we've read a line (row), we add a value to the colArray
+      # The value comes from tmpArr, and the index used is the column -1
+      # For example if we want the first column, we need index 0 of the array
       colArray+=(${tmpArr[$indexCol - 1]})    ### Fix index column minus 1 ######
-      #echo "we jsut put ${tmpArr[$indexCol]} into the colArray"
-
 
     done < $input
-    echo "Finallly........ the colArray is ${colArray[@]}"
+
+    # each time a "column is read", we add it to the tempfile_transpose file
     echo ${colArray[@]} >> $tempfile_transpose
-    echo "${#colArray[@]} is the num of values colArray" # after reading all rows
+    
   done
 
 
