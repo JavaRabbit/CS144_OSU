@@ -8,7 +8,7 @@ tempfile_transpose="tmpfile$$_transpose"
 
 # trap interrupt if needed
 # removes the tempfile and exits
-trap "rm -f $tempFile; exit 1" INT HUP TERM EXIT
+trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM EXIT
 
 # Check for the correct number of arguments
 # There should be only 1 or 2 arguments
@@ -94,9 +94,7 @@ transpose(){
 
   done
 
-
 }
-
 
 # Do if/else check, this is for rows. -----------------
 # check for -r -c and -both (-both should show usage )
@@ -229,8 +227,11 @@ elif [[ $1 == -c* ]]
   printf "\n"
 
 else
-  echo "not r or c"
-  # state usage here
+  # since the first agument does not start with -r or -c
+  # state usage here and exit 1
+  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  exit 1
 fi
 
-# Remove temp file???
+# Clean up and remove all temp files
+rm -rf tmpfile$$*
