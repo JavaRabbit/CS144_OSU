@@ -8,7 +8,8 @@ tempfile_transpose="tmpfile$$_transpose"
 
 # trap interrupt if needed
 # removes the tempfile and exits
-trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM EXIT
+trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM 
+#trap "rm -f tmpFile$$*" INT HUP TERM EXIT
 
 # Check for the correct number of arguments
 # There should be only 1 or 2 arguments
@@ -235,3 +236,6 @@ fi
 
 # Clean up and remove all temp files
 rm -rf tmpfile$$*
+
+# exit
+exit 0
