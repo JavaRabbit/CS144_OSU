@@ -21,6 +21,16 @@ then
   exit 1
 fi
 
+#  do a quick check here that the $1 starts with either -r or -c
+# otherwise, print usage to stderr, remove temp filesand exit 1
+if [[ $1 != -c* && $1 != -r* ]]
+then
+  echo "./stats {-rows|-cols} [file]" 1>&2
+  rm -rf tmpfile$$*
+  exit 1
+fi
+
+
 # If there are 2 arguments, then assign input as the second argument
 if [[ "$#" -eq 2 ]]
 then
@@ -35,14 +45,14 @@ fi
 
 # check that input file exists, use -e
 # -e returns true if file exists
-if [[ ! -e $2 ]]
+if [[ ! -e $input ]]
 then
   echo "./stats: cannot read $2" 1>&2
   exit 1
 fi
 
 # check that input file is readable
-if [[ ! -r $2 ]]
+if [[ ! -r $input ]]
 then
   echo "./stats: cannot read $2" 1>&2
   exit 1
@@ -52,13 +62,13 @@ fi
 # check if file is empty  -s
 # -s returns if file exists and if file size is greater than 0
 # empty input file is NOT an error.
-if [[ ! -s $2 ]]
+if [[ ! -s $input ]]
 then
   echo "./stats: $2 file is empty" 1>&2
+  # remove tmp files if necessary
+  rm -rf tmpfile$$*
   exit 0
 fi
-
-
 
 
 # transpose function for converting columns into rows
@@ -236,7 +246,7 @@ elif [[ $1 == -c* ]]
 else
   # since the first agument does not start with -r or -c
   # state usage here and exit 1
-  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  echo "./stats {-rows|-cols} [file]" 1>&2
   exit 1
 fi
 
