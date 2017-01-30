@@ -84,9 +84,13 @@ transpose(){
   # count the number of ELEMENTS (aka Columns)
   numCols=${#numArrs[@]}
 
+
+  # I couldn't get 'cut' to work, so I decided to use arrays
+  # to help transpose the columns into rows
+
   # below is a while loop nested in a for loop
   # for loop iterates over all columns, and while loop iterates
-  # over the rows
+  # over the rows.
 
   for indexCol in $(seq 1 $numCols)
   do
@@ -103,6 +107,7 @@ transpose(){
       # each time we've read a line (row), we add a value to the colArray
       # The value comes from tmpArr, and the index used is the column -1
       # For example if we want the first column, we need index 0 of the array
+      # therefore the element needed is at $indexCol - 1
       colArray+=(${tmpArr[$indexCol - 1]})
 
     done < $input
