@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# create a new temp file with process id
+# create a new temp file with process id if no input file specified
 tempfile="tmpfile$$"
+# create a temp file for file rotation
+tempfile_transpose="tmpfile$$_transpose"
 #echo $tempfile
 
 # trap interrupt if needed
-trap "rm -f $tempFile" INT HUP TERM EXIT
+# removes the tempfile and exits
+trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM 
+#trap "rm -f tmpFile$$*" INT HUP TERM EXIT
 
 # Check for the correct number of arguments
 # There should be only 1 or 2 arguments
@@ -17,8 +21,6 @@ then
   exit 1
 fi
 
-
-
 # check to see if text file is there. If not, let user enter into temp file
 if [[ "$#" -eq 2 ]]
 then
@@ -26,10 +28,8 @@ then
   input=$2
 else
   # prompt user with cat for stdin
-  echo "enter vals"
   cat > "$tempfile"
   input="$tempfile"
-
 fi
 
 
@@ -38,8 +38,9 @@ if [[ -a $2 && -r $2 ]]
 then
   echo "file found"
 else
-  echo "./stats: cannot read $2" 1>&2
-  exit 1
+  #echo "./stats: cannot read $2" 1>&2
+  echo "by pass"
+  #exit 1
 fi
 
 
@@ -51,6 +52,51 @@ fi
 # if user self entered, use input, else use $2
 
 
+# transpose function for converting columns into rows
+# function will output a new file
+transpose(){
+
+  # first count number of columns
+  # by using head to get the first line from the file
+  line=$(head -n 1 "$input")
+
+  #initialize empty array, and put first read line inside
+  numArrs=()
+  numArrs=("${numArrs[@]}" $line)
+
+  # count the number of ELEMENTS (aka Columns)
+  numCols=${#numArrs[@]}
+
+  # below is a while loop nested in a for loop
+  # for loop iterates over all columns, and while loop iterates
+  # over the rows
+
+  for indexCol in $(seq 1 $numCols)
+  do
+    #  initialize empty array for the Column
+    colArray=()
+    # this is the inside nested loop
+    while read line
+    do
+      # initialize an empty array, and read each row in the array
+      # In essence, we store each row
+      tmpArr=()
+      tmpArr=("${tmpArr[@]}" $line)
+
+      # each time we've read a line (row), we add a value to the colArray
+      # The value comes from tmpArr, and the index used is the column -1
+      # For example if we want the first column, we need index 0 of the array
+      colArray+=(${tmpArr[$indexCol - 1]})    ### Fix index column minus 1 ######
+
+    done < $input
+
+    # each time a "column is read", we add it to the tempfile_transpose file
+    echo ${colArray[@]} >> $tempfile_transpose
+
+  done
+
+}
+
 # Do if/else check, this is for rows. -----------------
 # check for -r -c and -both (-both should show usage )
 
@@ -59,39 +105,137 @@ then
 
 echo "Averages  Median"
 
+# use a while loop to read in the file line by line
 while read line
 do
-  #echo $line
+
   # for each row, the array must be cleared to 0 elements!
+  # put the line into the array
   numArr=()
-  numElementsInRow=0
   numArr=("${numArr[@]}" $line)
 
+  # initialize a variable to hold the sum of each row. initialize to 0
+  numElementsInRow=0
+
   # initialize variable "sum" to hold sum of row
+  # iterate over every element in the array
   sum=0
   for i in ${numArr[@]}
     do
+      # for each element add 1 to the numElementsInRow
       numElementsInRow=$((numElementsInRow + 1))
+      # add the elements value to the sum
       sum=$((sum + i))
     done
 
-  #echo the average for the row. Ensure that numbers are rounded correctly
+  # compute the average with the correct rounding
+  average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
 
-  echo "the sum is $sum"
-  #echo "The number of elements is: $numElementsInRow"
-  #echo "the first element is ${numArr[0]}"
-  # sort the array
 
-  # echo out the median
+  # sort the array using a for eac loop and echoing to sort
+  #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+  numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+
+
+  # determine element which to use for median
+  median=0
+  # if numElementsInRow is odd
+  if [[ $((numElementsInRow%2)) -eq 1 ]]
+    then
+    median="${numArr[$((numElementsInRow/2))]}"
+
+  else
+    median="${numArr[$((numElementsInRow/2))]}"
+
+    # if there are an an even number of elemnts per row
+    #choose larger of the two middle values
+
+  fi
+
+  # echo out both the average and median for each row
+  printf "$average\t$median\n"
+
+
 done < $input
 
 
 #---- For Adding up columns ---------------
 elif [[ $1 == -c* ]]
   then
-  echo "starts with c"
+  transpose
+
+  # set the tempfile_transpose as the input file
+  input=$tempfile_transpose
+
+  # create 2 arrays to store results. One is an averages array, the other is median array
+  avgArray=()
+  medianArray=()
+
+  # this code follow from the same as row
+  while read line
+  do
+
+    # for each row, the array must be cleared to 0 elements!
+    # put the line into the array
+    numArr=()
+    numElementsInRow=0
+    numArr=("${numArr[@]}" $line)
+
+    # initialize variable "sum" to hold sum of row
+    sum=0
+    for i in ${numArr[@]}
+      do
+        # for each element add 1 to the numElementsInRow
+        numElementsInRow=$((numElementsInRow + 1))
+        # add the elements value to the sum
+        sum=$((sum + i))
+      done
+
+    #echo the average for the row. Ensure that numbers are rounded correctly
+
+    average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
+    avgArray+=($average)
+
+    #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+    numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+
+
+
+    # determine element which to use for median
+    median=0
+    # if numElementsInRow is odd
+    if [[ $((numElementsInRow%2)) -eq 1 ]]
+      then
+      median="${numArr[$((numElementsInRow/2))]}"
+    else
+
+      median="${numArr[$((numElementsInRow/2))]}"
+
+      # if there are an an even number of elemnts per row
+      #choose larger of the two middle values
+
+    fi
+    medianArray+=($median)
+
+  done < $input
+
+  # Print output to the screen
+  printf "Averages:\n"
+  printf "%s\t" ${avgArray[@]}
+  printf "\n"
+  printf "Median:\n"
+  printf "%s\t" ${medianArray[@]}
+  printf "\n"
 
 else
-  echo "not r or c"
-  # state usage here
+  # since the first agument does not start with -r or -c
+  # state usage here and exit 1
+  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  exit 1
 fi
+
+# Clean up and remove all temp files
+rm -rf tmpfile$$*
+
+# exit
+exit 0
