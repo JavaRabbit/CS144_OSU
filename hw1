@@ -21,8 +21,8 @@ then
   exit 1
 fi
 
-#  do a quick check here that the $1 starts with either -r or -c
-# otherwise, print usage to stderr, remove temp filesand exit 1
+#  do a quick check here that the $1 argument starts with either -r or -c
+# otherwise, print usage to stderr, remove temp files and exit 1
 if [[ $1 != -c* && $1 != -r* ]]
 then
   echo "./stats {-rows|-cols} [file]" 1>&2
@@ -61,15 +61,16 @@ fi
 
 # check if file is empty  -s
 # -s returns if file exists and if file size is greater than 0
-# empty input file is NOT an error.
+# empty input file is NOT an error, so exit 0
 if [[ ! -s $input ]]
 then
   echo "./stats: $2 file is empty" 1>&2
-  # remove tmp files if necessary
+  # remove tmp files if necessary. this might occur if user is promted to enter
+  # numbers, but enters nothing. In this case, an empty tmpfile is created
+  # so this empty tmpfile must be removed
   rm -rf tmpfile$$*
   exit 0
 fi
-
 
 # transpose function for converting columns into rows
 # function will output a new file
@@ -217,7 +218,8 @@ elif [[ $1 == -c* ]]
     numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
-    # determine element which to use for median
+    # create a variable to hold the median. Set it to 0
+
     median=0
     # if numElementsInRow is odd
     if [[ $((numElementsInRow%2)) -eq 1 ]]
@@ -231,6 +233,7 @@ elif [[ $1 == -c* ]]
       #choose larger of the two middle values
 
     fi
+    # add the median variable to the medianArrray
     medianArray+=($median)
 
   done < $input

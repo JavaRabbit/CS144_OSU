@@ -8,7 +8,7 @@ tempfile_transpose="tmpfile$$_transpose"
 
 # trap interrupt if needed
 # removes the tempfile and exits
-trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM 
+trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM
 #trap "rm -f tmpFile$$*" INT HUP TERM EXIT
 
 # Check for the correct number of arguments
@@ -17,40 +17,60 @@ trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM
 # exit 1 if incorrect numbers of parameters
 if [[ "$#" -gt 2 || "$#" -lt 1 ]]
 then
-  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  echo "./stats {-rows|-cols} [file]" 1>&2
   exit 1
 fi
 
-# check to see if text file is there. If not, let user enter into temp file
+#  do a quick check here that the $1 argument starts with either -r or -c
+# otherwise, print usage to stderr, remove temp files and exit 1
+if [[ $1 != -c* && $1 != -r* ]]
+then
+  echo "./stats {-rows|-cols} [file]" 1>&2
+  rm -rf tmpfile$$*
+  exit 1
+fi
+
+
+# If there are 2 arguments, then assign input as the second argument
 if [[ "$#" -eq 2 ]]
 then
   # if argument is there, use it as the input
   input=$2
 else
-  # prompt user with cat for stdin
+  # here there is only one argument, therefore we ask user for input
+  # or the file is piped in
   cat > "$tempfile"
   input="$tempfile"
 fi
 
-
-# check that file exists and is readable
-if [[ -a $2 && -r $2 ]]
+# check that input file exists, use -e
+# -e returns true if file exists
+if [[ ! -e $input ]]
 then
-  echo "file found"
-else
-  #echo "./stats: cannot read $2" 1>&2
-  echo "by pass"
-  #exit 1
+  echo "./stats: cannot read $2" 1>&2
+  exit 1
+fi
+
+# check that input file is readable
+if [[ ! -r $input ]]
+then
+  echo "./stats: cannot read $2" 1>&2
+  exit 1
 fi
 
 
-# check for existing but empty file --- TO DO!!!!!!  use -s
-
-
-
-# check for cannot read file
-# if user self entered, use input, else use $2
-
+# check if file is empty  -s
+# -s returns if file exists and if file size is greater than 0
+# empty input file is NOT an error, so exit 0
+if [[ ! -s $input ]]
+then
+  echo "./stats: $2 file is empty" 1>&2
+  # remove tmp files if necessary. this might occur if user is promted to enter
+  # numbers, but enters nothing. In this case, an empty tmpfile is created
+  # so this empty tmpfile must be removed
+  rm -rf tmpfile$$*
+  exit 0
+fi
 
 # transpose function for converting columns into rows
 # function will output a new file
@@ -131,7 +151,6 @@ do
   # compute the average with the correct rounding
   average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
 
-
   # sort the array using a for eac loop and echoing to sort
   #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
   numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
@@ -154,7 +173,6 @@ do
 
   # echo out both the average and median for each row
   printf "$average\t$median\n"
-
 
 done < $input
 
@@ -200,8 +218,8 @@ elif [[ $1 == -c* ]]
     numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
+    # create a variable to hold the median. Set it to 0
 
-    # determine element which to use for median
     median=0
     # if numElementsInRow is odd
     if [[ $((numElementsInRow%2)) -eq 1 ]]
@@ -215,6 +233,7 @@ elif [[ $1 == -c* ]]
       #choose larger of the two middle values
 
     fi
+    # add the median variable to the medianArrray
     medianArray+=($median)
 
   done < $input
@@ -230,7 +249,7 @@ elif [[ $1 == -c* ]]
 else
   # since the first agument does not start with -r or -c
   # state usage here and exit 1
-  echo "Usage: ./stats {-rows|-cols} [file]" 1>&2
+  echo "./stats {-rows|-cols} [file]" 1>&2
   exit 1
 fi
 
@@ -238,4 +257,3 @@ fi
 rm -rf tmpfile$$*
 
 # exit
-exit 0
