@@ -64,7 +64,7 @@ fi
 # empty input file is NOT an error, so exit 0
 if [[ ! -s $input ]]
 then
-  echo "./stats: $2 file is empty" 1>&2
+  echo "./stats: file is empty" 1>&2
   # remove tmp files if necessary. this might occur if user is promted to enter
   # numbers, but enters no values. In this case, an empty tmpfile is created
   # so this empty tmpfile must be removed
@@ -248,5 +248,3 @@ fi
 
 # Clean up and remove all temp files
 rm -rf tmpfile$$*
-
-# exit
