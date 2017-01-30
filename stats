@@ -4,12 +4,11 @@
 tempfile="tmpfile$$"
 # create a temp file for file rotation
 tempfile_transpose="tmpfile$$_transpose"
-#echo $tempfile
 
 # trap interrupt if needed
 # removes the tempfile and exits
 trap "rm -f $tmpfile$$*; exit 1" INT HUP TERM
-#trap "rm -f tmpFile$$*" INT HUP TERM EXIT
+
 
 # Check for the correct number of arguments
 # There should be only 1 or 2 arguments
@@ -29,7 +28,6 @@ then
   rm -rf tmpfile$$*
   exit 1
 fi
-
 
 # If there are 2 arguments, then assign input as the second argument
 if [[ "$#" -eq 2 ]]
@@ -57,7 +55,6 @@ then
   echo "./stats: cannot read $2" 1>&2
   exit 1
 fi
-
 
 # check if file is empty  -s
 # -s returns if file exists and if file size is greater than 0
@@ -106,7 +103,7 @@ transpose(){
       # each time we've read a line (row), we add a value to the colArray
       # The value comes from tmpArr, and the index used is the column -1
       # For example if we want the first column, we need index 0 of the array
-      colArray+=(${tmpArr[$indexCol - 1]})    ### Fix index column minus 1 ######
+      colArray+=(${tmpArr[$indexCol - 1]})
 
     done < $input
 
@@ -149,12 +146,12 @@ do
     done
 
   # compute the average with the correct rounding
+  # (a + (b/2)) / b     formula ensures proper rounding
   average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
 
   # sort the array using a for eac loop and echoing to sort
   #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
   numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
-
 
   # determine element which to use for median
   # median will always be median="${numArr[$((numElementsInRow/2))]}"
@@ -209,13 +206,12 @@ elif [[ $1 == -c* ]]
       done
 
     #echo the average for the row. Ensure that numbers are rounded correctly
-
+    # (a + (b/2)) / b     formula ensures proper rounding
     average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
     avgArray+=($average)
 
     # sort the numArray to help find the median
     numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
-
 
     # create a variable to hold the median. Set it to 0
     # determine element which to use for median
