@@ -225,3 +225,24 @@ elif [[ $1 == -c* ]]
 
     # echo out the median
   done < $input
+
+
+
+# fixing median -------------------------
+# determine element which to use for median
+# median will always be median="${numArr[$((numElementsInRow/2))]}"
+# since spec specifies that if there are an even number of values
+# we choose the higher of the middle two
+median=0
+# if numElementsInRow is odd
+if [[ $((numElementsInRow%2)) -eq 1 ]]
+  then
+  median="${numArr[$((numElementsInRow/2))]}"
+
+else
+  median="${numArr[$((numElementsInRow/2))]}"
+
+  # if there are an an even number of elemnts per row
+  #choose larger of the two middle values
+
+fi

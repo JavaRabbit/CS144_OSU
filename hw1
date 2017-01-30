@@ -66,7 +66,7 @@ if [[ ! -s $input ]]
 then
   echo "./stats: $2 file is empty" 1>&2
   # remove tmp files if necessary. this might occur if user is promted to enter
-  # numbers, but enters nothing. In this case, an empty tmpfile is created
+  # numbers, but enters no values. In this case, an empty tmpfile is created
   # so this empty tmpfile must be removed
   rm -rf tmpfile$$*
   exit 0
@@ -157,19 +157,18 @@ do
 
 
   # determine element which to use for median
+  # median will always be median="${numArr[$((numElementsInRow/2))]}"
+  # since spec specifies that if there are an even number of values
+  # we choose the higher of the middle two
+
+  # if there is only 1 element, then 1/2 = 0.5
+  # and location of median is at index 0
+  # for example, if there are 3 elements, then 3/2 = 1.5
+  # so median is located at index 1
+  #  if there are 4 elements, then 4/2 = 2
+  # and the median is located at index 2
   median=0
-  # if numElementsInRow is odd
-  if [[ $((numElementsInRow%2)) -eq 1 ]]
-    then
-    median="${numArr[$((numElementsInRow/2))]}"
-
-  else
-    median="${numArr[$((numElementsInRow/2))]}"
-
-    # if there are an an even number of elemnts per row
-    #choose larger of the two middle values
-
-  fi
+  median="${numArr[$((numElementsInRow/2))]}"
 
   # echo out both the average and median for each row
   printf "$average\t$median\n"
@@ -214,25 +213,19 @@ elif [[ $1 == -c* ]]
     average=$(( (sum+(numElementsInRow/2))/numElementsInRow ))
     avgArray+=($average)
 
-    #numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
+    # sort the numArray to help find the median
     numArr=($(for each in ${numArr[@]}; do echo "$each" ; done | sort -n ))
 
 
     # create a variable to hold the median. Set it to 0
+    # determine element which to use for median
+    # median will always be median="${numArr[$((numElementsInRow/2))]}"
+    # since spec specifies that if there are an even number of values
+    # we choose the higher of the middle two
 
     median=0
-    # if numElementsInRow is odd
-    if [[ $((numElementsInRow%2)) -eq 1 ]]
-      then
-      median="${numArr[$((numElementsInRow/2))]}"
-    else
+    median="${numArr[$((numElementsInRow/2))]}"
 
-      median="${numArr[$((numElementsInRow/2))]}"
-
-      # if there are an an even number of elemnts per row
-      #choose larger of the two middle values
-
-    fi
     # add the median variable to the medianArrray
     medianArray+=($median)
 
